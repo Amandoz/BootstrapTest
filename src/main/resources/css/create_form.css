@@ -1,0 +1,22 @@
+.center {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    box-shadow: 0 0 20px rgb(0, 0, 0);
+    padding: 10px;
+}
+
+.background {
+    background: gray;
+}
+
+a {
+    text-decoration: none;
+    font-size: 20px;
+    color: black;
+}
+
+a:hover {
+    color: red;
+}
