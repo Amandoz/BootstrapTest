@@ -24,13 +24,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userService;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder(12);
     }
-//    @Bean
-//    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-//        return new BCryptPasswordEncoder(12);
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,14 +44,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login")
                 .anonymous()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user").hasRole("USER")
-                .antMatchers("/user").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/user"). hasAnyAuthority("ADMIN", "USER")
                 .anyRequest()
                 .authenticated();
     }
     @Autowired
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder());
     }
 }

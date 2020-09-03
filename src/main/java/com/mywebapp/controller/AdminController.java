@@ -46,10 +46,10 @@ public class AdminController {
                                        @RequestParam(value = "adminCheck", required = false) boolean adminCheck) {
         Set<Role> roles = new HashSet<>();
         if (userCheck) {
-            roles.add(new Role(1, "ROLE_ADMIN"));
+            roles.add(new Role(2, "USER"));
         }
         if (adminCheck) {
-            roles.add(new Role(2, "ROLE_USER"));
+            roles.add(new Role(1, "ADMIN"));
         }
         user.setRoles(roles);
         userService.saveUser(user);
@@ -78,10 +78,10 @@ public class AdminController {
         user.setRoles(null);
         Set<Role> roles = new HashSet<>();
         if (adminCheck) {
-            roles.add(new Role(1, "ROLE_ADMIN"));
+            roles.add(new Role(1, "ADMIN"));
         }
         if (userCheck) {
-            roles.add(new Role(2, "ROLE_USER"));
+            roles.add(new Role(2, "USER"));
         }
         user.setRoles(roles);
         userService.updateUser(user);
