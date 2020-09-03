@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
-public class DaoImpl implements Dao {
+public class UserDaoImpl implements UserDao {
 
     @PersistenceContext
     EntityManager em;
@@ -19,8 +19,8 @@ public class DaoImpl implements Dao {
     }
 
     @Override
-    public List getAllUser() {
-        return em.createQuery("SELECT u FROM User u").getResultList();
+    public List<User> getAllUser() {
+        return em.createQuery("SELECT u FROM User u", User.class).getResultList();
     }
 
     @Override
@@ -36,5 +36,10 @@ public class DaoImpl implements Dao {
     @Override
     public void saveUser(User user) {
         em.persist(user);
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        return em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class).setParameter("username", username).getSingleResult();
     }
 }

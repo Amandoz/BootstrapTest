@@ -1,51 +1,59 @@
 package com.mywebapp.service;
 
-import com.mywebapp.dao.Dao;
-import com.mywebapp.dao.DaoImpl;
+import com.mywebapp.dao.UserDao;
+import com.mywebapp.dao.UserDaoImpl;
 import com.mywebapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-    private Dao dao;
+
+    private UserDao userDao;
 
     public UserServiceImpl() {
 
     }
 
     @Autowired
-    public UserServiceImpl(DaoImpl dao) {
-        this.dao = dao;
+    public UserServiceImpl(UserDaoImpl dao) {
+        this.userDao = dao;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return dao.getAllUser();
+        return userDao.getAllUser();
     }
 
     @Override
     public User getUserById(Long id) {
-        return dao.getUserById(id);
+        return userDao.getUserById(id);
     }
 
     @Override
     public void saveUser(User user) {
-        dao.saveUser(user);
+        userDao.saveUser(user);
     }
 
     @Override
     public void deleteUserById(Long id) {
-        dao.deleteUserById(id);
+        userDao.deleteUserById(id);
     }
 
     @Override
     public void updateUser(User user) {
-        dao.updateUser(user);
+        userDao.updateUser(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userDao.findUserByUsername(username);
     }
 }

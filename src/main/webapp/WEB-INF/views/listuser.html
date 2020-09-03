@@ -1,28 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" class="background">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>List User</title>
-    <link rel="stylesheet" href="http://localhost:8080/css/user_list.css">
 </head>
 <body>
-<div class="center">
+<div class="right">
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Sign Out</button>
+    </form>
+</div>
+<div>
     <h1>TABLE USERS</h1>
-<table border="1">
-    <tr>
-        <td>Name</td>
-        <td>E-mail</td>
-        <td>Age</td>
-    </tr>
-    <tr th:each="user: ${users}">
-        <td th:utext="${user.getName()}"></td>
-        <td th:utext="${user.getEmail()}"></td>
-        <td th:utext="${user.getAge()}"></td>
-        <td><a th:href="'/delete/' + ${user.getId()}">delete</a></td>
-        <td><a th:href="'/edit/' + ${user.getId()}">edit</a></td>
-    </tr>
-</table>
-    <a class="create" href="/createuser">new user</a>
+    <table border="1">
+        <tr>
+            <td>Login</td>
+            <td>Password</td>
+            <td>Name</td>
+            <td>E-mail</td>
+            <td>Age</td>
+            <td>Role</td>
+        </tr>
+
+        <tr th:each="user: ${users}">
+            <td th:utext="${user.getUsername()}"></td>
+            <td th:utext="${user.getPassword()}"></td>
+            <td th:utext="${user.getName()}"></td>
+            <td th:utext="${user.getEmail()}"></td>
+            <td th:utext="${user.getAge()}"></td>
+            <td>
+                <p th:each="role: ${user.getRoles()}" th:utext="${role.getName()}"></p>
+            </td>
+            <td><a th:href="'delete/' + ${user.getId()}">delete</a></td>
+            <td><a th:href="'edit/' + ${user.getId()}">edit</a></td>
+        </tr>
+    </table>
+    <div>
+        <a href="createuser">new user</a>
+    </div>
+    <div>
+        <a href="/user">go to user page</a>
+    </div>
 </div>
 </body>
 </html>
