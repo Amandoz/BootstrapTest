@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,29 +28,25 @@ public class AdminController {
     }
 
     @GetMapping("/")
-    public String listController(Model model) {
+    public String listController(Model model, Principal principal) {
         List<User> users = userService.getAllUsers();
+        User user = (User) userService.loadUserByUsername(principal.getName());
+        model.addAttribute("userNow", user);
         model.addAttribute("users", users);
+        model.addAttribute("newUser", new User());
         return "listuser";
     }
 
-    @GetMapping("/createuser")
-    public String createUserController(Model model) {
-        model.addAttribute("user", new User());
-        return "createuser";
-    }
-
     @PostMapping("/createuser")
-    public String createUserController(@ModelAttribute("user") User user,
-                                       @RequestParam(value = "userCheck", required = false) boolean userCheck,
-                                       @RequestParam(value = "adminCheck", required = false) boolean adminCheck) {
+    public String createUserController(@ModelAttribute("newUser") User user,
+                                       @RequestParam(value = "check-create", required = false, defaultValue = "") String check) {
         Set<Role> roles = new HashSet<>();
-        if (userCheck) {
-            roles.add(new Role(2, "USER"));
-        }
-        if (adminCheck) {
-            roles.add(new Role(1, "ADMIN"));
-        }
+            if (check.contains("user")) {
+                roles.add(new Role(2, "USER"));
+            }
+            if (check.contains("admin")) {
+                roles.add(new Role(1, "ADMIN"));
+            }
         user.setRoles(roles);
         userService.saveUser(user);
 
@@ -62,25 +59,29 @@ public class AdminController {
         return "redirect:/admin/";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUserController(@PathVariable long id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles().toString());
-        return "edituser";
-    }
-
+    // Саша если вы читаете этот текст напишите мне, а то я переживаю
     @PostMapping("/edit/{id}")
-    public String editUserController(@ModelAttribute("user") User user,
-                                     @RequestParam(value = "userCheck", required = false) boolean userCheck,
-                                     @RequestParam(value = "adminCheck", required = false) boolean adminCheck) {
-        user.setRoles(null);
-        Set<Role> roles = new HashSet<>();
-        if (adminCheck) {
-            roles.add(new Role(1, "ADMIN"));
+    public String editUserController(@PathVariable long id,
+                                     @RequestParam("first_name") String firstName,
+                                     @RequestParam("last_name") String lastName,
+                                     @RequestParam("age") int age,
+                                     @RequestParam("email") String email,
+                                     @RequestParam("password") String password,
+                                     @RequestParam(value = "check-edit", required = false, defaultValue = "") String check) {
+        User user = userService.getUserById(id);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+        user.setEmail(email);
+        if (!password.isEmpty()) {
+            user.setPassword(password);
         }
-        if (userCheck) {
+        Set<Role> roles = new HashSet<>();
+        if (check.contains("user")) {
             roles.add(new Role(2, "USER"));
+        }
+        if (check.contains("admin")) {
+            roles.add(new Role(1, "ADMIN"));
         }
         user.setRoles(roles);
         userService.updateUser(user);
